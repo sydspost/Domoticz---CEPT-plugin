@@ -7,8 +7,22 @@ Features:
 - Automatically updates energy prices after 16:00 hour (with energy prices next day)
 
 Prerequests
-- Python3.13 or higher (probally working with all python3 versions)
+- Python3.13 or higher (probably working with all python3 versions)
 
 Installation
 - download this git in the Domoticz plugin directory
-- run pip install -r requirements.txt in the folder cept
+- run cd cept
+- run pip install -r requirements.txt
+- run sudo chown root:root * 
+- run sudo chmod 755 plugin.py
+- restart domoticz with run /etc/init.d/domoticz.sh restart
+
+Configuration
+- Add CEPT plugin on Domoticz/Settings/Hardware tab
+- Give it a logical name
+- Create a token on wwww.enever.nl/prijzenfeeds, activate it, and copy/paste in the field Token
+- Choose your EnergySupplier (If your EnergySupplier is not listed, compare your tariffs with one off the listed Energy suppliers at wwww.enever.nl/prijzenfeeds and choose the one which has the same tariffs)
+- Add up to 4 devices with the syntax <devicename:duration> for instance "dryer:3" creates a Domoticz Text device with te name "CEPT - dryer" and picks a timeslot off 3 cheapest energy hours. The Text devices are found on the "Other" tab.
+- Activate the plugin
+
+Enjoy !
