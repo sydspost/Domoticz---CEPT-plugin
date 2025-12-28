@@ -166,7 +166,7 @@ class BasePlugin:
             self.refreshEneverData=True
 
         if self.refreshEneverData:
-            self.getEneverData(self)
+            self.getEneverData()
             Domoticz.Log('Got new data from Enever.nl')
 
         # Update CEPT devices
