@@ -158,7 +158,9 @@ class BasePlugin:
         CEPT=""
 
         # Retrieve new data from enever.nl website after 16:00 hour
-        if (datetime.now().time() >= datetime.strptime("16:00","%H:%M").time()) and not self.refreshEneverData:
+        if (datetime.now().time() >= datetime.strptime("16:00","%H:%M").time()) and \
+           (datetime.now().time() <= datetime.strptime("17:00","%H:%M").time()) and \
+           not self.refreshEneverData:
             self.refreshEneverData=True
         elif (datetime.now().time() >= datetime.strptime("00:00","%H:%M").time()) and \
              (datetime.now().time() <= datetime.strptime("01:00","%H:%M").time()) and \
