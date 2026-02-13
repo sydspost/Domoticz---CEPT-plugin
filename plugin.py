@@ -3,8 +3,11 @@
 # Cheapest Energy Price Time 
 #
 # Author : Syds Post
-# Version: 1.0.0
-# Date   : 22-12-2025
+# Version: 1.1.0
+# Date   : 13-2-2026
+# Version History
+# 1.0.0 Initial version
+# 1.1.0 Added webhook, f.e. call http://localhost:8090?duration=3
 #
 """
 <plugin key="CEPT" name="CEPT" author="Syds Post" version="1.0.0" wikilink="" externallink="">
@@ -28,6 +31,8 @@
         </ul>
     </description>
     <params>
+        <param field="Address" label="IP Address" width="200px" required="true" default="127.0.0.1"/>
+        <param field="Port" label="Port" width="30px" required="true" default="8090"/>
         <param field="Mode1" label="Token" width="150px" required="true"/>
         <param field="Mode2" label="EnergySupplier" width="150px">
             <options>
@@ -64,6 +69,7 @@ import requests
 from datetime import datetime, timedelta
 import time
 import threading
+import webhook_listener
 
 class BasePlugin:
 
@@ -83,6 +89,11 @@ class BasePlugin:
         self.runCounter=0
         self.EnergyList=[]
         self.refreshEneverData=False
+
+        # Setup webhook
+        self.webhooks = webhook_listener.Listener(host=Parameters["Address"], port=int(Parameters["Port"]), handlers={"GET": self.process_get_request})
+        self.webhooks.start()
+        Domoticz.Log("Webhook started on " + Parameters["Address"] + ":" + Parameters["Port"])
         
         # Set initial heartbeat 
         Domoticz.Heartbeat(30)
@@ -157,7 +168,7 @@ class BasePlugin:
         # Domoticz.Log("handleThread called time="+str(time.time()))
         CEPT=""
 
-        # Retrieve new data from enever.nl website after 16:00 hour
+        # Retrieve new data from enever.nl website after 16:00 hour and 0:00 hour
         if (datetime.now().time() >= datetime.strptime("16:00","%H:%M").time()) and \
            (datetime.now().time() <= datetime.strptime("17:00","%H:%M").time()) and \
            not self.refreshEneverData:
@@ -214,6 +225,12 @@ class BasePlugin:
                         index = i
             i+=1
         return str(datetime.strptime(self.EnergyList[index]['datum'],'%Y-%m-%dT%H:%M:%S%z').replace(tzinfo=None))
+
+    def process_get_request(self, request, *args, **kwargs):
+        payload = '{"cept": "' + self.getCEPT(int(kwargs['duration'])) + '"}'
+        # Domoticz.Log(payload)
+
+        return payload
 
 global _plugin
 _plugin = BasePlugin()
