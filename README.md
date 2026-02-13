@@ -21,8 +21,11 @@ Configuration
 - Add CEPT plugin on Domoticz/Settings/Hardware tab
 - Give it a logical name
 - Create a token on wwww.enever.nl/prijzenfeeds, activate it, and copy/paste in the field Token
+- Configure ipadress and port of the webhook, defaults to 127.0.0.1:8090
 - Choose your EnergySupplier (If your EnergySupplier is not listed, compare your tariffs with one off the listed Energy suppliers at wwww.enever.nl/prijzenfeeds and choose the one which has the same tariffs)
 - Add up to 4 devices with the syntax <devicename:duration> for instance "dryer:3" creates a Domoticz Text device with te name "CEPT - dryer" and picks a timeslot off 3 cheapest energy hours. The Text devices are found on the "Other" tab.
 - Activate the plugin
+
+Webhook example: http://127.0.0.1:8090?duration=3, returns {"cept": "2026-02-13 23:00:00"}
 
 Enjoy !
