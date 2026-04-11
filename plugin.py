@@ -1,13 +1,14 @@
-#!/usr/bin/python3 
+#!/usr/bin/python3
 #
-# Cheapest Energy Price Time 
+# Cheapest Energy Price Time
 #
 # Author : Syds Post
-# Version: 1.1.0
+# Version: 1.1.1
 # Date   : 13-2-2026
 # Version History
 # 1.0.0 Initial version
 # 1.1.0 Added webhook, f.e. call http://localhost:8090?duration=3
+# 1.1.1 Updated energy suppliers
 #
 """
 <plugin key="CEPT" name="CEPT" author="Syds Post" version="1.0.0" wikilink="" externallink="">
@@ -39,16 +40,26 @@
                 <option label="prijs" value="prijs"/>
                 <option label="ANWB" value="prijsANWB"/>
                 <option label="Budget Energie" value="prijsBE"/>
+                <option label="Coolblue Energie" value="prijsCB"/>
+                <option label="Energiedirect" value="prijsED"/>
                 <option label="EasyEnergy" value="prijsEE"/>
+                <option label="Energiek" value="prijsEG"/>
+                <option label="Eneco" value="prijsEN"/>
+                <option label="Essent" value="prijsES"/>
                 <option label="NextEnergy" value="prijsNE"/>
                 <option label="Energie van Ons" value="prijsEVO"/>
                 <option label="Energy Zero" value="prijsEZ"/>
-                <option label="Frank Energie" value="prijsFR"/>
+                <option label="Frank Energy" value="prijsFR"/>
                 <option label="Groenestroom lokaal" value="prijsGSL"/>
+                <option label="Hegg Energy" value="prijsHE"/>
+                <option label="Inova Energy" value="prijsIN"/>
                 <option label="Mijndomein Energie" value="prijsMDE"/>
                 <option label="Pure Energy" value="prijsPE"/>
+                <option label="Quatt" value="prijsQU"/>
+                <option label="SamSam" value="prijsSS"/>
                 <option label="Tibber" value="prijsTI"/>
                 <option label="Vandebron" value="prijsVDB"/>
+                <option label="Vattenfall" value="prijsVF"/>
                 <option label="Vrij op naam" value="prijsVON"/>
                 <option label="Wout Energie" value="prijsWE"/>
                 <option label="Zonneplan" value="prijsZP"/>
@@ -94,8 +105,8 @@ class BasePlugin:
         self.webhooks = webhook_listener.Listener(host=Parameters["Address"], port=int(Parameters["Port"]), handlers={"GET": self.process_get_request})
         self.webhooks.start()
         Domoticz.Log("Webhook started on " + Parameters["Address"] + ":" + Parameters["Port"])
-        
-        # Set initial heartbeat 
+
+        # Set initial heartbeat
         Domoticz.Heartbeat(30)
 
         # Create icons if not existing
@@ -104,7 +115,7 @@ class BasePlugin:
                 Domoticz.Image(Filename='images.zip').Create()
             except:
                 Domoticz.Log('Could not upload icons, images.zip not found in plugin file folder')
-        
+
         # Getting CEPT-devices, create Devices if not exists yet
         # Make list of Parameters 3 - 6
         for i in range(3,6):
@@ -118,14 +129,14 @@ class BasePlugin:
                 for Device in Devices:
                     if ((deviceName == Devices[Device].DeviceID)):
                         deviceFound = True
-    
+
                 if deviceFound == False:
                     Domoticz.Device(Name=deviceName, DeviceID=deviceName, TypeName="General", Unit=len(Devices)+1, Type=243, Subtype=19, Switchtype=0, Image=Images["cept"].ID, Used=1).Create()
                     Domoticz.Log("CEPT-device '"+ deviceName +"', device was not found, created.")
 
         # Load initial data from Enever.nl
         self.getEneverData()
- 
+
         # Create/Start update thread
         self.updateThread = threading.Thread(name="CEPTUpdateThread", target=BasePlugin.handleThread, args=(self,))
         self.updateThread.start()
