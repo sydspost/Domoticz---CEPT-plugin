@@ -93,7 +93,7 @@ class BasePlugin:
         self.Enever_token=Parameters["Mode1"]
         self.urlEnergyToday="https://enever.nl/apiv3/stroomprijs_vandaag.php?token="
         self.urlEnergyTomorrow="https://enever.nl/apiv3/stroomprijs_morgen.php?token="
-        self.EnergieSupplier=Parameters["Mode2"]
+        self.EnergySupplier=Parameters["Mode2"]
         self.CEPTdevices=[]
         self.durationList=[]
         self.maxRuns=120 # 120 at heartbeat #30, runs once a hour
@@ -204,8 +204,8 @@ class BasePlugin:
     def getEneverData(self,):
         # Retrieve data from enever.nl
         try:
-            EnergyToday = requests.get(self.urlEnergyToday+self.Enever_token+"&price="+self.EnergieSupplier)
-            EnergyTomorrow = requests.get(self.urlEnergyTomorrow+self.Enever_token+"&price="+self.EnergieSupplier)
+            EnergyToday = requests.get(self.urlEnergyToday+self.Enever_token+"&price="+self.EnergySupplier)
+            EnergyTomorrow = requests.get(self.urlEnergyTomorrow+self.Enever_token+"&price="+self.EnergySupplier)
             self.EnergyList=EnergyToday.json()['data'] + EnergyTomorrow.json()['data']
             self.refreshEneverData=False
             Domoticz.Log("Enever data refreshed")
@@ -230,7 +230,7 @@ class BasePlugin:
                 if i+duration <= maxIndex:
                     sampleEnergy = 0
                     for sample in range(i,i+duration):
-                        sampleEnergy += float(self.EnergyList[sample]['prijsEE'])
+                        sampleEnergy += float(self.EnergyList[sample][self.EnergySupplier])
                     if minEnergy > sampleEnergy:
                         minEnergy = sampleEnergy
                         index = i
